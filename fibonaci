@@ -1,0 +1,59 @@
+#include <iostream>
+#include <chrono>
+#include <vector>
+#include <fstream>
+
+using namespace std;
+
+// Fungsi Fibonacci dengan pendekatan rekursif
+long long fibonacciRecursive(int n) {
+    if (n <= 1)
+        return n;
+    return fibonacciRecursive(n - 1) + fibonacciRecursive(n - 2);
+}
+
+// Fungsi Fibonacci dengan pendekatan dynamic programming
+long long fibonacciDP(int n) {
+    if (n <= 1)
+        return n;
+    vector<long long> fib(n + 1);
+    fib[0] = 0;
+    fib[1] = 1;
+    for (int i = 2; i <= n; ++i) {
+        fib[i] = fib[i - 1] + fib[i - 2];
+    }
+    return fib[n];
+}
+
+int main() {
+    int test_values[] = {10, 25, 30, 40, 50};
+
+    ofstream results;
+    results.open("fibonacci_results.txt");
+
+    cout << "Fibonacci Recursive vs Dynamic Programming Execution Time\n";
+    cout << "------------------------------------------------------\n";
+    cout << "n\tRecursive (ms)\tDynamic Programming (ms)\n";
+
+    results << "n,Recursive (ms),Dynamic Programming (ms)\n";
+
+    for (int n : test_values) {
+        // Measure time for recursive approach
+        auto start_recursive = chrono::high_resolution_clock::now();
+        fibonacciRecursive(n);
+        auto end_recursive = chrono::high_resolution_clock::now();
+        chrono::duration<double, milli> duration_recursive = end_recursive - start_recursive;
+
+        // Measure time for dynamic programming approach
+        auto start_dp = chrono::high_resolution_clock::now();
+        fibonacciDP(n);
+        auto end_dp = chrono::high_resolution_clock::now();
+        chrono::duration<double, milli> duration_dp = end_dp - start_dp;
+
+        cout << n << "\t" << duration_recursive.count() << "\t\t" << duration_dp.count() << "\n";
+        results << n << "," << duration_recursive.count() << "," << duration_dp.count() << "\n";
+    }
+
+    results.close();
+    return 0;
+}
